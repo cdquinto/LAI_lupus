@@ -12,7 +12,7 @@
 ```bash
 
 ## transform plink file to vcf
-plink2 --bfile GWAS_CLEANED_030111 --snps-only 'just-acgt' --recode bgz vcf --out GWAS_CLEANED_030111s
+plink2 --bfile GWAS_CLEANED_030111 --snps-only 'just-acgt' --recode bgz vcf --out GWAS_CLEANED_030111
 
 ## get number of SNPs after filtering indels
 bcftools stats Lupus_GWAS_final.vcf | grep "number of SNPs:"
