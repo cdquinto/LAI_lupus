@@ -29,10 +29,6 @@ bcftools stats Lupus_GWAS_final.vcf | grep "number of SNPs:"
 
 ```bash
 
-salloc -p heavy -c 8 --mem=40G
-
-conda activate /mnt/home_users/cdquinto/miniforge3/envs/snakemake_env
-
-snakemake -s snakefile-shapeit4.smk --jobs 1
+sbatch run_phasing.sh
 
 ```
