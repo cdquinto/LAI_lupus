@@ -28,8 +28,11 @@ bcftools stats Lupus_GWAS_final.vcf | grep "number of SNPs:"
 ## Phasing with SHAPEIT4
 
 ```bash
-conda activate ~/miniforge3/envs/snakemake_env
 
-mamba activate /mnt/home_users/cdquinto/miniforge3/envs/snakemake_env
+salloc -p heavy -c 8 --mem=40G
+
+conda activate /mnt/home_users/cdquinto/miniforge3/envs/snakemake_env
+
+
 
 ```
