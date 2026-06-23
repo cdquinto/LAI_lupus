@@ -21,4 +21,7 @@ bcftools stats Lupus_GWAS_final.vcf | grep "number of SNPs:"
 ```
 ## Phasing with SHAPEIT4
 
+```bash
+conda activate ~/miniforge3/envs/snakemake_env
 
+```
