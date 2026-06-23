@@ -24,4 +24,6 @@ bcftools stats Lupus_GWAS_final.vcf | grep "number of SNPs:"
 ```bash
 conda activate ~/miniforge3/envs/snakemake_env
 
+mamba activate /mnt/home_users/cdquinto/miniforge3/envs/snakemake_env
+
 ```
