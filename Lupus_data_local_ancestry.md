@@ -11,8 +11,14 @@
 
 ```bash
 
+module load plink
+module load bcftools
+
 ## transform plink file to vcf
 plink2 --bfile GWAS_CLEANED_030111 --snps-only 'just-acgt' --recode bgz vcf --out GWAS_CLEANED_030111
+
+## create index
+bcftools index -c /mnt/home_users/cdquinto/Lupus_GWAS/GWAS_CLEANED_030111.vcf.gz
 
 ## get number of SNPs after filtering indels
 bcftools stats Lupus_GWAS_final.vcf | grep "number of SNPs:"
