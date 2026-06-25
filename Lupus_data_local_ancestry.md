@@ -32,3 +32,5 @@ bcftools stats Lupus_GWAS_final.vcf | grep "number of SNPs:"
 sbatch run_phasing.sh
 
 ```
+## Build reference panel to train gnomix panel
+/data/data_lab/reference_panels/1KGP_hg19_vcfs/
