@@ -15,10 +15,10 @@ SHAPEIT4 = "shapeit4"
 
 # Rutas de entrada actualizadas
 GENETIC_MAP_DIR = "/data/data_vault/rgonzalez/resources/genetic_maps/shapeit4_GM/b37"
-LUPUS_INPUT_VCF = "/mnt/home_users/cdquinto/Lupus_GWAS/GWAS_CLEANED_030111.vcf.gz"
+LUPUS_INPUT_VCF = "/mnt/home_users/cdquinto/Lupus_GWAS/GWAS.hg19.sorted.vcf.gz"
 
 # Nueva ruta base para tus resultados personalizados
-OUT_DIR = "/mnt/home_users/cdquinto/Lupus_GWAS"
+OUT_DIR = "/mnt/home_users/cdquinto/Lupus_GWAS/phasing"
 RESULTS = "phasing" # Se mantiene para archivos temporales/logs si lo deseas
 
 # ============================================================
@@ -27,8 +27,8 @@ RESULTS = "phasing" # Se mantiene para archivos temporales/logs si lo deseas
 
 rule all:
     input:
-        expand(f"{OUT_DIR}/GWAS_CLEANED_030111.phased.chr{{chr}}.vcf.gz.csi", chr=CHRS),
-        f"{OUT_DIR}/GWAS_CLEANED_030111.phased.autosomes.vcf.gz.csi"
+        expand(f"{RESULTS}/GWAS.hg19.sorted.phased.chr{{chr}}.vcf.gz.csi", chr=CHRS),
+        f"{RESULTS}/GWAS.hg19.sorted.phased.autosomes.vcf.gz.csi"
 
 
 # ============================================================
@@ -39,8 +39,8 @@ rule split_nomaf_by_chr:
     input:
         vcf = LUPUS_INPUT_VCF
     output:
-        vcf_gz = f"{RESULTS}/split/GWAS_CLEANED_030111.chr{{chr}}.vcf.gz",
-        csi    = f"{RESULTS}/split/GWAS_CLEANED_030111.chr{{chr}}.vcf.gz.csi"
+        vcf_gz = f"{RESULTS}/split/GWAS.hg19.sorted.phased.chr{{chr}}.vcf.gz",
+        csi    = f"{RESULTS}/split/GWAS.hg19.sorted.phased.chr{{chr}}.vcf.gz.csi"
     threads: 4
     log:
         f"{RESULTS}/logs/split.chr{{chr}}.log"
@@ -74,15 +74,14 @@ rule split_nomaf_by_chr:
 
 rule phase_nomaf_chr:
     input:
-        vcf_gz = f"{RESULTS}/split/GWAS_CLEANED_030111.chr{{chr}}.vcf.gz",
-        csi    = f"{RESULTS}/split/GWAS_CLEANED_030111.chr{{chr}}.vcf.gz.csi"
+        vcf_gz = f"{RESULTS}/split/GWAS.hg19.sorted.phased.chr{{chr}}.vcf.gz",
+        csi    = f"{RESULTS}/split/GWAS.hg19.sorted.phased.chr{{chr}}.vcf.gz.csi"
     output:
-        # Redirigido a tu ruta personalizada y con tu patrón de nombres exacto
-        vcf_gz = f"{OUT_DIR}/GWAS_CLEANED_030111.phased.chr{{chr}}.vcf.gz"
+        vcf_gz = f"{RESULTS}/GWAS.hg19.sorted.phased.chr{{chr}}.vcf.gz"
     params:
         genetic_map = GENETIC_MAP_DIR + "/chr{chr}.b37.gmap.gz",
         region = "{chr}",
-        shapeit_log = f"{RESULTS}/logs/GWAS_CLEANED_030111.phased.chr{{chr}}.shapeit4.log"
+        shapeit_log = f"{RESULTS}/logs/GWAS.hg19.sorted.phased.chr{{chr}}.shapeit4.log"
     threads: 8
     log:
         f"{RESULTS}/logs/phase.chr{{chr}}.log"
@@ -113,9 +112,9 @@ rule phase_nomaf_chr:
 
 rule index_nomaf_phased_chr:
     input:
-        vcf_gz = f"{OUT_DIR}/GWAS_CLEANED_030111.phased.chr{{chr}}.vcf.gz"
+        vcf_gz = f"{RESULTS}/GWAS.hg19.sorted.phased.chr{{chr}}.vcf.gz"
     output:
-        csi = f"{OUT_DIR}/GWAS_CLEANED_030111.phased.chr{{chr}}.vcf.gz.csi"
+        csi = f"{RESULTS}/GWAS.hg19.sorted.phased.chr{{chr}}.vcf.gz.csi"
     threads: 4
     log:
         f"{RESULTS}/logs/index_phased.chr{{chr}}.log"
@@ -139,11 +138,11 @@ rule index_nomaf_phased_chr:
 
 rule concat_nomaf_phased_autosomes:
     input:
-        vcfs = expand(f"{OUT_DIR}/GWAS_CLEANED_030111.phased.chr{{chr}}.vcf.gz", chr=CHRS),
-        csis = expand(f"{OUT_DIR}/GWAS_CLEANED_030111.phased.chr{{chr}}.vcf.gz.csi", chr=CHRS)
+        vcfs = expand(f"{RESULTS}/GWAS.hg19.sorted.phased.chr{{chr}}.vcf.gz", chr=CHRS),
+        csis = expand(f"{RESULTS}/GWAS.hg19.sorted.phased.chr{{chr}}.vcf.gz.csi", chr=CHRS)
     output:
-        vcf_gz = f"{OUT_DIR}/GWAS_CLEANED_030111.phased.autosomes.vcf.gz",
-        csi    = f"{OUT_DIR}/GWAS_CLEANED_030111.phased.autosomes.vcf.gz.csi"
+        vcf_gz = f"{RESULTS}/GWAS.hg19.sorted.phased.autosomes.vcf.gz",
+        csi    = f"{RESULTS}/GWAS.hg19.sorted.phased.autosomes.vcf.gz.csi"
     threads: 4
     log:
         f"{RESULTS}/logs/concat_phased_autosomes.log"
