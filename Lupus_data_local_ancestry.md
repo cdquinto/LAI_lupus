@@ -56,7 +56,7 @@ bcftools stats GWAS.hg19.sorted.vcf.gz | grep "number of SNPs:"
 ```bash
 sbatch run_phasing.sh
 ```
-## Build reference panel to train gnomix panel
+### Build reference panel to train gnomix panel
 Reference data path: `/data/data_lab/reference_panels/1KGP_plink/`
 
 ```bash
