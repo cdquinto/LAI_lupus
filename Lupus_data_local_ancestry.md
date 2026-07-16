@@ -54,15 +54,12 @@ bcftools stats GWAS.hg19.sorted.vcf.gz | grep "number of SNPs:"
 ### Phasing with SHAPEIT4
 
 ```bash
-
 sbatch run_phasing.sh
-
 ```
 ## Build reference panel to train gnomix panel
 Reference data path: `/data/data_lab/reference_panels/1KGP_plink/`
 
 ```bash
-
 bcftools query -f '%ID\n' /mnt/home_users/cdquinto/Lupus_GWAS/phasing/GWAS.hg19.sorted.phased.autosomes.vcf.gz > /mnt/home_users/cdquinto/Lupus_GWAS/local_ancestry/GWAS_phased_snp_ids.txt
 
 cut -f2 /data/data_lab/reference_panels/1KGP_plink/ALL.atDNA.biAllelicSNPnoDI.genotypes.id.bim | sort -u > /mnt/home_users/cdquinto/Lupus_GWAS/local_ancestry/1KGP_snp_ids.txt
@@ -70,7 +67,6 @@ cut -f2 /data/data_lab/reference_panels/1KGP_plink/ALL.atDNA.biAllelicSNPnoDI.ge
 awk 'NR==FNR {a[$1]; next} $1 in a' 1KGP_snp_ids.txt GWAS_phased_snp_ids.txt > common_snps.txt
 
 ## 345244 common_snps.txt
-
 ````
 ### Extract samples
 
@@ -90,7 +86,6 @@ done
 echo "Extracted $(wc -l < sample_ids.txt) sample IDs to sample_ids.txt"
 
 ## added the NAT samples from 1KG
-
 ````
 
 ### Extract sites and selected samples from 1KG reference
@@ -122,5 +117,32 @@ bcftools merge -m none references_1KG.vcf.gz GWAS.hg19.common.vcf.gz -o merged_f
 bcftools index -c merged_for_gnomix.vcf.gz
 
 bcftools query -l merged_for_gnomix.vcf.gz > samples_list_gnomix.txt
-
 ```
+
+### Split again into references and query
+
+```bash
+module load plink
+
+for i in {1..22}
+do
+plink2 --vcf merged_for_gnomix.vcf.gz --keep references_ids.txt --chr ${i} --recode bgz vcf --out references_chr${i}
+plink2 --vcf merged_for_gnomix.vcf.gz --keep query_ids.txt --chr ${i} --recode bgz vcf --out query_chr${i}
+done
+```
+
+### Reformat genetic maps
+
+```bash
+for i in {1..22}
+do
+zcat /data/data_vault/rgonzalez/resources/genetic_maps/shapeit4_GM/b37/chr${i}.b37.gmap.gz | awk 'BEGIN{OFS="\t"} NR>1 {print $2, $1, $3}' | gzip > /mnt/home_users/cdquinto/references/genetic_map_b37_gnomix/chr${i}_fixed.gmap.gz
+done
+```
+
+### Generate slurm batch file and submit jobs
+
+```bash
+./run_gnomix_all.sh
+```
+
